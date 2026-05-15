@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discord Porsche Hood</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    width:100%;
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:black;
+}
+
+/* الخلفية */
+
+.bg-video{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:-2;
+}
+
+/* تغبيش */
+
+body::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.30);
+    backdrop-filter:blur(2px);
+    z-index:-1;
+}
+
+/* زر الصوت */
+
+.sound-btn{
+    position:absolute;
+    top:20px;
+    right:20px;
+    width:60px;
+    height:60px;
+    border-radius:18px;
+    background:rgba(255,255,255,0.10);
+    backdrop-filter:blur(10px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    z-index:999;
+}
+
+.sound-btn i{
+    color:white;
+    font-size:22px;
+}
+
+/* الهود */
+
+.profile{
+    position:relative;
+    z-index:2;
+    transform:scale(0.65);
+}
+
+/* اللوقو */
+
+.logo{
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid rgba(255,255,255,0.10);
+    box-shadow:
+    0 0 25px rgba(0,0,0,0.7),
+    0 0 40px rgba(255,255,255,0.05);
+}
+
+/* معلومات المستخدم */
+
+.user-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-top:14px;
+}
+
+/* الصورة الصغيرة */
+
+.small-avatar{
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    object-fit:cover;
+    box-shadow:0 0 18px rgba(0,0,0,0.8);
+}
+
+.user-info{
+    text-align:left;
+}
+
+/* الاسم */
+
+.username{
+    color:white;
+    font-size:24px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    text-shadow:0 0 10px black;
+}
+
+/* البادج */
+
+.custom-badge{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:4px 9px;
+    border-radius:9px;
+    background:rgba(35,35,35,0.8);
+    border:1px solid rgba(255,255,255,0.06);
+    font-size:14px;
+}
+
+.bolt{
+    color:#ffb300;
+}
+
+.badge-text{
+    color:#d9d9d9;
+}
+
+.gear{
+    color:#8da1ff;
+}
+
+/* حالة الدسكورد */
+
+.discord-status{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:7px;
+    font-size:13px;
+    color:white;
+}
+
+.status-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+}
+
+/* Online */
+
+.status-online{
+    background:#23a55a;
+    box-shadow:0 0 10px #23a55a;
+}
+
+/* Idle */
+
+.status-idle{
+    background:#f0b232;
+    box-shadow:0 0 10px #f0b232;
+}
+
+/* Offline */
+
+.status-offline{
+    background:#80848e;
+    box-shadow:0 0 10px #80848e;
+}
+
+/* الايقونات */
+
+.icons{
+    margin-top:20px;
+    display:flex;
+    justify-content:center;
+    gap:15px;
+}
+
+.icons a{
+    color:white;
+    font-size:24px;
+    transition:0.3s;
+    text-decoration:none;
+}
+
+/* سناب */
+
+.icons a:nth-child(1):hover{
+    color:#ffe600;
+    text-shadow:0 0 15px #ffe600;
+    transform:translateY(-4px) scale(1.12);
+}
+
+/* دسكورد */
+
+.icons a:nth-child(2):hover{
+    color:#5865F2;
+    text-shadow:0 0 15px #5865F2;
+    transform:translateY(-4px) scale(1.12);
+}
+
+/* تيك توك */
+
+.icons a:nth-child(3):hover{
+    color:white;
+    text-shadow:
+    2px 0 #ff0050,
+    -2px 0 #00f2ea,
+    0 0 15px white;
+    transform:translateY(-4px) scale(1.12);
+}
+
+/* المشاهدات */
+
+.views{
+    position:absolute;
+    left:18px;
+    bottom:18px;
+    color:white;
+    font-size:13px;
+    z-index:999;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- الخلفية -->
+
+<video autoplay muted loop playsinline class="bg-video">
+    <source src="background.mp4" type="video/mp4">
+</video>
+
+<!-- زر الصوت -->
+
+<div class="sound-btn" onclick="toggleMusic()">
+    <i id="soundIcon" class="fa-solid fa-volume-xmark"></i>
+</div>
+
+<!-- الموسيقى -->
+
+<audio id="bgMusic" loop preload="auto">
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<!-- الهود -->
+
+<div class="profile">
+
+    <!-- اللوقو -->
+
+    <img src="logo.png" class="logo">
+
+    <div class="user-row">
+
+        <!-- الصورة الصغيرة -->
+
+        <img src="logo2.png" class="small-avatar">
+
+        <div class="user-info">
+
+            <!-- الاسم -->
+
+            <div class="username">
+
+                o53t
+
+                <div class="custom-badge">
+
+                    <span class="bolt">⚡</span>
+
+                    <span class="badge-text">MB7</span>
+
+                    <span class="gear">
+                        <i class="fa-solid fa-gear"></i>
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- حالة الدسكورد -->
+
+            <div class="discord-status">
+
+                <span id="statusDot"
+                class="status-dot status-offline"></span>
+
+                <span id="discordStatusText">
+                    Offline
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- الايقونات -->
+
+    <div class="icons">
+
+        <!-- Snapchat -->
+
+        <a href="https://snapchat.com/add/idoeq" target="_blank">
+            <i class="fa-brands fa-snapchat"></i>
+        </a>
+
+        <!-- Discord -->
+
+        <a href="#" onclick="copyDiscord()">
+            <i class="fa-brands fa-discord"></i>
+        </a>
+
+        <!-- TikTok -->
+
+        <a href="https://www.tiktok.com/@y1s6" target="_blank">
+            <i class="fa-brands fa-tiktok"></i>
+        </a>
+
+    </div>
+
+</div>
+
+<!-- المشاهدات -->
+
+<div class="views">
+    👁 <span id="viewCount">0</span>
+</div>
+
+<script>
+
+const DISCORD_ID = "1266782535657066579";
+
+const music = document.getElementById("bgMusic");
+const icon = document.getElementById("soundIcon");
+
+music.volume = 0.7;
+
+/* تشغيل الموسيقى */
+
+document.addEventListener("click", async () => {
+
+    if(music.paused){
+
+        try{
+
+            await music.play();
+
+            icon.className =
+            "fa-solid fa-volume-high";
+
+        }catch(e){}
+
+    }
+
+}, { once:true });
+
+/* زر الصوت */
+
+async function toggleMusic(){
+
+    if(music.paused){
+
+        await music.play();
+
+        icon.className =
+        "fa-solid fa-volume-high";
+
+    }else{
+
+        music.pause();
+
+        icon.className =
+        "fa-solid fa-volume-xmark";
+
+    }
+
+}
+
+/* نسخ الدسكورد */
+
+function copyDiscord(){
+
+    navigator.clipboard.writeText("o53t");
+
+    alert("Discord copied: o53t");
+
+}
+
+/* حالة الدسكورد */
+
+async function getDiscordStatus(){
+
+    const dot = document.getElementById("statusDot");
+    const text = document.getElementById("discordStatusText");
+
+    try{
+
+        const res =
+        await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
+
+        const json = await res.json();
+
+        let status = json.data.discord_status;
+
+        dot.className = "status-dot";
+        dot.innerHTML = "";
+
+        dot.style.background = "";
+        dot.style.boxShadow = "";
+        dot.style.width = "";
+        dot.style.height = "";
+        dot.style.fontSize = "";
+
+        if(status === "online"){
+
+            dot.classList.add("status-online");
+            text.innerText = "Online";
+
+        }
+
+        else if(status === "idle"){
+
+            dot.classList.add("status-idle");
+            text.innerText = "Idle";
+
+        }
+
+        else if(status === "dnd"){
+
+            dot.innerHTML = "⛔";
+            dot.style.background = "transparent";
+            dot.style.boxShadow = "none";
+            dot.style.width = "auto";
+            dot.style.height = "auto";
+            dot.style.fontSize = "18px";
+
+            text.innerText = "Do Not Disturb";
+
+        }
+
+        else{
+
+            dot.classList.add("status-offline");
+            text.innerText = "Offline";
+
+        }
+
+    }catch(err){
+
+        dot.className =
+        "status-dot status-offline";
+
+        text.innerText = "Offline";
+
+    }
+
+}
+
+getDiscordStatus();
+
+setInterval(getDiscordStatus, 15000);
+
+/* المشاهدات */
+
+let views = localStorage.getItem("views");
+
+if (views === null) {
+    views = 0;
+}
+
+views++;
+
+localStorage.setItem("views", views);
+
+document.getElementById("viewCount").innerText = views;
+
+</script>
+
+</body>
+</html>
